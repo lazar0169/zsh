@@ -37,9 +37,17 @@ brew install zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-s
 CUSTOM_PLUGINS="$HOME/.oh-my-zsh/custom/plugins"
 mkdir -p "$CUSTOM_PLUGINS"
 
-# Optional: add any custom plugin clones here
-# Example: git clone plugin if not already present
-# zsh-history-substring-search is installed via brew, so no need to clone
+# --- Fix compinit insecure directories (required for Homebrew Zsh plugins) ---
+echo "Fixing compinit insecure directories..."
+chmod go-w '/opt/homebrew/share'
+chmod -R go-w '/opt/homebrew/share/zsh'
+
+# Remove old compdump
+rm -f ~/.zcompdump
+
+# Reinitialize completion system
+autoload -Uz compinit
+compinit
 
 # --- Install Nerd Font for powerline (agnoster theme) ---
 echo "Installing Hack Nerd Font..."
@@ -78,4 +86,3 @@ source ~/.zshrc
 
 echo "Zsh setup complete!"
 echo "Remember to set your terminal font to 'Hack Nerd Font' for agnoster theme."
-
