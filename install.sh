@@ -1,17 +1,9 @@
 #!/bin/bash
-
-# --------------------------
-# Zsh Setup Script (macOS)
-# --------------------------
-# Assumes Homebrew is installed
-# Run with: bash setup-zsh.sh
-# --------------------------
-
 set -e
 
-echo "Starting Zsh setup..."
+echo "🚀 Starting Zsh setup..."
 
-# --- Install Zsh (if not installed) ---
+# --- Install Zsh ---
 if ! command -v zsh &> /dev/null; then
   echo "Installing Zsh..."
   brew install zsh
@@ -20,39 +12,29 @@ fi
 # --- Install Oh My Zsh ---
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   echo "Installing Oh My Zsh..."
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
-# --- Copy .zshrc (assumes you have it in same folder as script) ---
+# --- Copy .zshrc ---
 if [ -f "./.zshrc" ]; then
   echo "Copying .zshrc..."
   cp ./.zshrc ~/
 fi
 
-# --- Install Zsh plugins ---
+# --- Install plugins ---
 echo "Installing Zsh plugins..."
-brew install zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
+brew install zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search zsh-completions
 
-# Ensure custom plugins folder exists
-CUSTOM_PLUGINS="$HOME/.oh-my-zsh/custom/plugins"
-mkdir -p "$CUSTOM_PLUGINS"
-
-# --- Fix compinit insecure directories (required for Homebrew Zsh plugins) ---
+# --- Fix permissions for Homebrew completions ---
+ZSH_SHARE=$(brew --prefix)/share
 echo "Fixing compinit insecure directories..."
-chmod go-w '/opt/homebrew/share'
-chmod -R go-w '/opt/homebrew/share/zsh'
+chmod go-w "$ZSH_SHARE"
+chmod -R go-w "$ZSH_SHARE/zsh"
 
-# Remove old compdump
-rm -f ~/.zcompdump
-
-# Reinitialize completion system
-autoload -Uz compinit
-compinit
-
-# --- Install Nerd Font for powerline (agnoster theme) ---
-echo "Installing Hack Nerd Font..."
-brew tap homebrew/cask-fonts
-brew install --cask font-hack-nerd-font
+# --- Install JetBrains Mono Nerd Font ---
+echo "Installing JetBrains Mono Nerd Font..."
+brew tap homebrew/cask-fonts || true
+brew install --cask font-jetbrains-mono-nerd-font
 
 # --- Install nvm ---
 if [ ! -d "$HOME/.nvm" ]; then
@@ -61,28 +43,29 @@ if [ ! -d "$HOME/.nvm" ]; then
   mkdir -p ~/.nvm
 fi
 
-# --- Install Docker CLI (optional, depends if you need it) ---
+# --- Install Docker (optional) ---
 if ! command -v docker &> /dev/null; then
   echo "Installing Docker..."
   brew install --cask docker
 fi
 
-# --- Flutter setup ---
+# --- Install Flutter ---
 if [ ! -d "$HOME/Development/flutter" ]; then
   echo "Installing Flutter..."
   mkdir -p ~/Development
-  git clone https://github.com/flutter/flutter.git ~/Development/flutter
+  git clone --depth=1 https://github.com/flutter/flutter.git ~/Development/flutter
 fi
 
-# --- Android SDK setup ---
+# --- Install Android SDK ---
 if [ ! -d "$HOME/Library/Android/sdk" ]; then
   echo "Installing Android SDK..."
   brew install --cask android-sdk
 fi
 
-# --- Source the new Zsh config ---
-echo "Applying Zsh configuration..."
-source ~/.zshrc
+# --- Set Zsh as default shell ---
+if ! grep -q "$(which zsh)" /etc/shells; then
+  echo "$(which zsh)" | sudo tee -a /etc/shells
+fi
+chsh -s "$(which zsh)"
 
-echo "Zsh setup complete!"
-echo "Remember to set your terminal font to 'Hack Nerd Font' for agnoster theme."
+echo "✅ Zsh setup complete!"
