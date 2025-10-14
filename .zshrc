@@ -46,13 +46,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
-# --- ANDROID SDK ---
-export ANDROID_HOME="$HOME/Library/Android/sdk"
-export PATH="$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
-
-# --- FLUTTER ---
-export PATH="$HOME/Development/flutter/bin:$PATH"
-
 # --- CHROME EXECUTABLE ---
 export CHROME_EXECUTABLE="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
 
